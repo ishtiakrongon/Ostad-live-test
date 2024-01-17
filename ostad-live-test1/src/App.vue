@@ -1,30 +1,55 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <div v-for="task in tasks" :key="task.name">
+      {{ task.name }} - {{ task.time }} minutes
+      <button @click="editTask(task)">Edit</button>
+    </div>
+
+    <div v-if="selectedTask">
+      <h2>Edit Task</h2>
+      <form @submit.prevent="updateTask">
+        <label for="name">Name:</label>
+        <input type="text" id="name" v-model="selectedTask.name" />
+        <label for="time">Time:</label>
+        <input type="number" id="time" v-model.number="selectedTask.time" />
+        <button type="submit">Update</button>
+      </form>
+    </div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<script>
+import { ref } from 'vue';
+
+export default {
+  setup() {
+    const tasks = ref([
+      { name: 'Task 1', time: 30 },
+      { name: 'Task 2', time: 40 },
+      { name: 'Task 3', time: 60 },
+      { name: 'Task 4', time: 45 },
+      { name: 'Task 5', time: 50 },
+    ]);
+
+    const selectedTask = ref(null);
+
+    const editTask = (task) => {
+      selectedTask.value = task;
+    };
+
+    const updateTask = () => {
+      const index = tasks.value.findIndex((t) => t.name === selectedTask.value.name);
+      tasks.value[index] = selectedTask.value;
+      selectedTask.value = null;
+    };
+
+    return {
+      tasks,
+      selectedTask,
+      editTask,
+      updateTask,
+    };
+  },
+};
+</script>
+
